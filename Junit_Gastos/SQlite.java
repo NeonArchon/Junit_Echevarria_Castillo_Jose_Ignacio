@@ -22,9 +22,7 @@ public class SQlite {
 
     }
 
-    //table de usuarios
-
-    //String nombre, String DNI, double ahorros)
+    //tabla de usuarios
     private void TablaUsuarios (Connection conn){
 
         String sql = "CREATE TABLE IF NOT EXISTS Usuarios (" +
@@ -42,7 +40,26 @@ public class SQlite {
 
     }
 
+    //tabla de gastos
+    private void TablaGastos(Connection conn){
 
+        String sql = "CREATE TABLE IF NOT EXISTS Gastos (" +
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "DNI VARCHAR(9) NOT NULL, " +
+                "monto REAL NOT NULL, " +
+                "tipo VARCHAR(15) NOT NULL CHECK(tipo IN ('Vacaciones', 'Alquiler', 'IRPF', 'Vicios')), " +
+                "fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP, " +
+                "FOREIGN KEY (DNI) REFERENCES Usuarios(DNI)" +
+                ");";
+
+        try (Statement stmt = conn.createStatement()) {
+            stmt.execute(sql);
+            System.out.println("La tabla Gastos ha sido creada o ya existe.");
+        } catch (SQLException e) {
+            System.out.println("Error al crear la tabla Usuarios: " + e.getMessage());
+        }
+
+    }
 
 }
 
