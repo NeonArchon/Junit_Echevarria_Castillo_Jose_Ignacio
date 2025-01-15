@@ -14,6 +14,31 @@ public class Usuario {
         Ahorros = ahorros;
     }
 
+    //getters y setters
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String nombre) {
+        Nombre = nombre;
+    }
+
+    public String getDNI() {
+        return DNI;
+    }
+
+    public void setDNI(String DNI) {
+        this.DNI = DNI;
+    }
+
+    public double getAhorros() {
+        return Ahorros;
+    }
+
+    public void setAhorros(double ahorros) {
+        Ahorros = ahorros;
+    }
+
     // Validar formato básico del DNI
     public boolean validarDNI() {
         final String letrasDNI = "TRWAGMYFPDXBNJZSQVHLCKE";
