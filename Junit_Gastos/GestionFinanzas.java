@@ -45,6 +45,57 @@ public class GestionFinanzas {
         return false;
     }
 
+    // Función para registrar un gasto
+    public boolean registrarGasto(double monto, String tipo) {
+        String url = "jdbc:sqlite:Satander.db";
 
+        // Verificar fondos suficientes
+        if (usuario.getAhorros() < monto) {
+            System.out.println("Fondos insuficientes.");
+            return false;
+        }
+
+        // Validar tipo de gasto
+        try {
+            TipoGasto.valueOf(tipo);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Tipo de gasto invalido.");
+            return false;
+        }
+
+        // Transacción para registrar el gasto y actualizar los ahorros
+        String updateAhorrosSQL = "UPDATE Usuarios SET ahorros = ahorros - ? WHERE DNI = ?";
+        String insertGastoSQL = "INSERT INTO Gastos (DNI, monto, tipo) VALUES (?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(url)) {
+            conn.setAutoCommit(false);
+
+            // Actualizar ahorros
+            try (PreparedStatement pstmt1 = conn.prepareStatement(updateAhorrosSQL)) {
+                pstmt1.setDouble(1, monto);
+                pstmt1.setString(2, usuario.getDNI());
+                pstmt1.executeUpdate();
+            }
+
+            // Registrar gasto
+            try (PreparedStatement pstmt2 = conn.prepareStatement(insertGastoSQL)) {
+                pstmt2.setString(1, usuario.getDNI());
+                pstmt2.setDouble(2, monto);
+                pstmt2.setString(3, tipo);
+                pstmt2.executeUpdate();
+            }
+
+            // Confirmar transacción
+            conn.commit();
+
+            // Actualizar objeto usuario
+            usuario.setAhorros(usuario.getAhorros() - monto);
+            return true;
+
+        } catch (SQLException e) {
+            System.out.println("Error al registrar el gasto: " + e.getMessage());
+            return false;
+        }
+    }
 
 }
